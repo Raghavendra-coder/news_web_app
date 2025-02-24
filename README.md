@@ -1,7 +1,10 @@
 Project URL: https://latestnewswebapp.pythonanywhere.com/
 (Suggested to go for this URL first)
+
 2. Loom video URL : part-1 : https://www.loom.com/share/7da41fe3a2f44debb504225365e5627f?sid=b64fff90-73fd-4771-94de-3136f8443e1a
-                                  part-2 : https://www.loom.com/share/859fd640c0dd4df5b11fc7811c9ab221
+                    part-2 : https://www.loom.com/share/859fd640c0dd4df5b11fc7811c9ab221
+
+
 
 
 
