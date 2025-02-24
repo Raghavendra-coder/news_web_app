@@ -1,0 +1,141 @@
+{% extends "base.html" %}
+{% block content %}
+<div class="container mx-auto p-4">
+    <!-- Header Section -->
+    <div class="text-center mb-8">
+        <h1 class="text-4xl font-extrabold text-blue-600">NEWS</h1>
+        <p class="text-gray-500 mt-2">Stay updated with the latest news</p>
+    </div>
+
+    <!-- Filters Section -->
+    <form method="get" action="" class="flex flex-wrap gap-4 mb-6  p-4">
+    <div class="flex flex-wrap gap-4 mb-6 bg-gray-100 p-4 rounded-lg shadow-md">
+        <div>
+            <label for="language" class="block text-sm font-medium text-gray-700">Language</label>
+            <select id="language" name="language" class="border border-gray-300 rounded px-3 py-2 w-full focus:ring focus:ring-blue-300">
+                <option value="">All</option>
+                {% for code, name in languages.items %}
+                <option value="{{ code }}">{{ name }}</option>
+                {% endfor %}
+            </select>
+        </div>
+
+        <div>
+            <label for="country" class="block text-sm font-medium text-gray-700">Country</label>
+            <select id="country" name="country" class="border border-gray-300 rounded px-3 py-2 w-full focus:ring focus:ring-blue-300">
+                <option value="">All</option>
+                {% for code, name in countries.items %}
+                <option value="{{ code }}">{{ name }}</option>
+                {% endfor %}
+            </select>
+        </div>
+
+        <div>
+            <label for="domain" class="block text-sm font-medium text-gray-700">Domain</label>
+            <select id="domain" name="domain" class="border border-gray-300 rounded px-3 py-2 w-full focus:ring focus:ring-blue-300">
+                <option value="">All</option>
+                {% for domain in domain %}
+                <option value="{{ domain }}">{{ domain }}</option>
+                {% endfor %}
+            </select>
+        </div>
+        <div class="w-full sm:w-auto flex items-end">
+            <button type="submit" class="bg-blue-600 text-white px-4 py-2 rounded-lg shadow hover:bg-blue-700 focus:ring focus:ring-blue-300">Submit</button>
+        </div>
+    </div>
+
+    </form>
+    <div class="news-container">
+{% include "news-feed.html" %}
+    </div>
+    <!-- News Section -->
+
+</div>
+{% endblock %}
+{% block script %}
+<script>
+ $(document).ready(function () {
+    function startCountdownAndAjax() {
+        let countdown = 300; // 5 minutes in seconds (300 seconds)
+
+        // Update the countdown timer on screen every second
+        const timerInterval = setInterval(function () {
+            const minutes = Math.floor(countdown / 60);
+            const seconds = countdown % 60;
+
+            // Format the timer as MM:SS
+            $("#countdown-timer").text(`Updating feed in: ${minutes}:${seconds.toString().padStart(2, '0')}`);
+            countdown--;
+
+            if (countdown < 0) {
+                clearInterval(timerInterval); // Stop the timer when it hits zero
+
+                // Make the AJAX call
+                makeAjaxCall();
+
+                // Restart the countdown and AJAX
+                startCountdownAndAjax();
+            }
+        }, 1000);
+    }
+
+    function makeAjaxCall() {
+        const country = $("#country").val();
+        const language = $("#language").val();
+        const domain = $("#domain").val();
+
+        // Initialize an empty array to store query parameters
+        const params = [];
+
+        // Add parameters only if they are selected
+        if (country) {
+            params.push(`country=${encodeURIComponent(country)}`);
+        }
+        if (language) {
+            params.push(`language=${encodeURIComponent(language)}`);
+        }
+        if (domain) {
+            params.push(`domain=${encodeURIComponent(domain)}`);
+        }
+
+        // Build the query string
+        const queryString = params.length ? `?${params.join("&")}` : "";
+        url = "{% url 'automated_call' %}" + queryString
+        console.log(url)
+        $.ajax({
+            url: url,
+            dataType: "json",
+            success: function (data) {
+                $(".news-container").html(data['html']);
+            },
+            error: function () {
+                alert("Error while refreshing news feed. Next update will be in 5 minutes.");
+            }
+        });
+    }
+
+    // Add a timer element to the DOM if it doesn't exist
+    if ($("#countdown-container").length === 0) {
+        $("body").append(`
+            <div id="countdown-container" style="
+                position: fixed;
+                top: 10px;
+                right: 10px;
+                background-color: rgba(0, 0, 0, 0.7);
+                color: white;
+                padding: 10px 15px;
+                font-size: 16px;
+                border-radius: 8px;
+                box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+                z-index: 1000;
+            ">
+                <span id="countdown-timer">Updating feed in: 5:00</span>
+            </div>
+        `);
+    }
+
+    // Start the countdown and AJAX process
+    startCountdownAndAjax();
+});
+    </script>
+{% endblock %}

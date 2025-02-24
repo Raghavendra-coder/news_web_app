@@ -1,0 +1,8 @@
+SHELL=/bin/sh
+USER=mabookair
+PATH=/usr/bin:/bin:/usr/local/bin:/opt/anaconda3/bin:/opt/anaconda3/envs/piv_env/bin
+PWD=/Users/mabookair
+SHLVL=1
+HOME=/Users/mabookair
+LOGNAME=mabookair
+_=/usr/bin/env
